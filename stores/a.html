@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rồng CSS Art Chuyển Động</title>
+    <style>
+      /* --- ĐỊNH NGHĨA HOẠT HÌNH (KEYFRAMES) --- */
+
+      /* 1. Hoạt hình lắc lư đầu rồng */
+      @keyframes head-bob {
+        0% {
+          transform: translate(0, 0) rotate(10deg);
+        }
+        50% {
+          transform: translate(5px, -5px) rotate(15deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(10deg);
+        }
+      }
+
+      /* 2. Hoạt hình thân rồng uốn sóng nhẹ */
+      @keyframes body-wave {
+        0%,
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+          transform: translate(5px, 0) rotate(5deg);
+        }
+      }
+
+      /* --- CSS CHUNG VÀ CẤU TRÚC (GIỮ NGUYÊN) --- */
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f0f0;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      #DRAGON {
+        position: relative;
+        transform: scale(0.8);
+      }
+
+      #SELECT {
+        position: relative;
+        transform: translate(0, -100px);
+      }
+
+      /* --- PHẦN ĐẦU RỒNG (ÁP DỤNG HOẠT HÌNH) --- */
+      .headStart {
+        position: relative;
+        width: 0px;
+        height: 0px;
+        border: 45px solid transparent;
+        border-top: 50px solid #8e382d;
+        border-right: 15px solid #8e382d;
+        /* ÁP DỤNG ANIMATION */
+        animation: head-bob 4s ease-in-out infinite;
+        z-index: 10;
+      }
+
+      .horn {
+        /* ... CSS sừng ... */
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 30px solid #daa520;
+        top: -45px;
+        left: 20px;
+        transform: rotate(-30deg);
+        z-index: 12;
+      }
+
+      .snout {
+        /* ... CSS mõm ... */
+        position: absolute;
+        margin-top: -30px;
+        margin-left: 10px;
+        width: 0px;
+        height: 0px;
+        border: 15px solid transparent;
+        border-top: 15px solid #d4c8b6;
+        border-left: 20px solid #d4c8b6;
+        transform: rotate(15deg) skewX(-10deg);
+        z-index: 11;
+      }
+
+      .LSFeye,
+      .RSFeye {
+        /* ... CSS mắt ... */
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background-color: yellow;
+        border-radius: 50%;
+        border: 2px solid black;
+        top: -5px;
+        left: -35px;
+        z-index: 15;
+      }
+
+      /* --- PHẦN THÂN RỒNG (ÁP DỤNG HOẠT HÌNH VÀ DELAY) --- */
+      .bodySegment {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(to right, #4caf50 40%, #8bc34a);
+        border: 4px solid #333;
+        border-radius: 50%;
+        position: absolute;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+        z-index: 9;
+
+        /* ÁP DỤNG ANIMATION CHUNG */
+        animation: body-wave 3s ease-in-out infinite alternate;
+      }
+
+      /* Dùng animation-delay để tạo hiệu ứng sóng uốn lượn */
+      .s1 {
+        top: 50px;
+        left: 10px;
+        transform: rotate(20deg);
+        animation-delay: 0s; /* Bắt đầu ngay */
+      }
+
+      .s2 {
+        top: 100px;
+        left: -10px;
+        transform: rotate(-10deg);
+        animation-delay: 0.5s; /* Chậm hơn 0.5 giây so với s1 */
+      }
+
+      /* Thêm hiệu ứng cho đuôi để hoàn chỉnh */
+      .dragonTail {
+        position: absolute;
+        top: 250px;
+        left: -50px;
+        width: 0;
+        height: 0;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        border-top: 70px solid #ff4500;
+        transform: rotate(150deg);
+        z-index: 5;
+        /* Thân càng về sau càng lắc mạnh hơn một chút */
+        animation: body-wave 3s ease-in-out infinite alternate;
+        animation-delay: 1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="DRAGON">
+      <img src="./public/images/oppo.png" alt="" />
+    </div>
+  </body>
+</html>

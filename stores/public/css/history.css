@@ -1,0 +1,126 @@
+/* ---------------- USER INFO ---------------- */
+.user-info-box {
+  margin: 20px 40px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  gap: 30px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  background: #d8eaff;
+  border-radius: 50%;
+}
+
+.user-details {
+  flex: 1;
+  display: grid;
+}
+
+.user-stat-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+/* ---------------- TAB MENU ---------------- */
+.tab-menu {
+  margin: 10px 40px;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+}
+
+.tab-menu div {
+  cursor: pointer;
+}
+
+/* ---------------- MAIN LAYOUT ---------------- */
+/* .container {
+  display: flex;
+  margin: 20px 40px;
+  gap: 20px;
+} */
+
+.order-history-flex {
+  display: flex;
+}
+
+/* LEFT SIDEBAR */
+.left-sidebar {
+  width: 220px;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  height: 100%;
+}
+
+.left-sidebar div {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* RIGHT CONTENT */
+.right-content {
+  flex: 1;
+}
+
+.tab-filter {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-box {
+  margin-top: 20px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 20px;
+}
+
+.order-title {
+  color: #36c15b;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.order-line {
+  height: 1px;
+  background: #ccc;
+  margin: 15px 0;
+}
+
+.order-product {
+  display: flex;
+  gap: 15px;
+}
+
+.product-img {
+  border-radius: 8px;
+}
+
+.reorder-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #008cff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}

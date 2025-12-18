@@ -124,8 +124,14 @@ switch($action){
     case 'forgotForm':
     (new AuthController())->forgotForm();
     break;
-
+    case 'apply_voucher':
+        (new CartController())->apply_voucher();
+        break;
+    case 'remove_voucher':
+        (new CartController())->remove_voucher();
+        break;
 
     default:
         echo "Page not found";
+
 }

@@ -83,8 +83,55 @@
                     <div class="summary-title">THÔNG TIN ĐƠN HÀNG</div>
 
                     <div class="summary-content">
-                        <div class="summary-total">
-                            Tổng tiền: <span id="cart-total"><?= number_format($total, 0, ',', '.') ?></span>đ
+
+                        <div class="promo-code-section" style="margin-bottom: 20px;">
+                            <form action="index.php?action=apply_voucher" method="POST" style="display: flex; gap: 5px;">
+                                <input type="text" name="voucher_code" placeholder="Nhập mã giảm giá" 
+                                    style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex-grow: 1;">
+                                <button type="submit" style="padding: 8px 15px; cursor: pointer; background: #0094f7; color: #fff; border: none; border-radius: 4px;">
+                                    Áp dụng
+                                </button>
+                            </form>
+                            
+                            <?php if (isset($_SESSION['voucher'])): ?>
+                                <div style="margin-top: 10px; color: green; font-size: 0.9em;">
+                                    Đã áp dụng mã: <strong><?= $_SESSION['voucher']['code'] ?></strong> 
+                                    (-<?= number_format($_SESSION['voucher']['discount'], 0, ',', '.') ?>đ)
+                                    <a href="index.php?action=remove_voucher" style="color: red; text-decoration: none; margin-left: 10px;">[Xóa]</a>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (isset($_GET['error']) && $_GET['error'] == 'invalid_voucher'): ?>
+                                <div style="margin-top: 10px; color: red; font-size: 0.9em;">Mã giảm giá không hợp lệ!</div>
+                            <?php endif; ?>
+                        </div>
+
+                    <div class="summary-content">
+                        <?php 
+                            // Lấy số tiền giảm giá từ session, nếu không có thì bằng 0
+                            $discount = isset($_SESSION['voucher']) ? $_SESSION['voucher']['discount'] : 0;
+                            $grandTotal = $total - $discount;
+                            if ($grandTotal < 0) $grandTotal = 0; // Đảm bảo tiền không âm
+                        ?>
+
+                        <div class="summary-details" style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Tạm tính:</span>
+                                <span><?= number_format($total, 0, ',', '.') ?>đ</span>
+                            </div>
+
+                            <?php if ($discount > 0): ?>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: red;">
+                                    <span>Giảm giá:</span>
+                                    <span>-<?= number_format($discount, 0, ',', '.') ?>đ</span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="summary-total" style="border-top: 1px solid #eee; padding-top: 10px; font-weight: bold; font-size: 1.2em;">
+                            Tổng thanh toán: <span id="cart-total" style="color: #d70018;"><?= number_format($grandTotal, 0, ',', '.') ?></span>đ
+                        </div>
+
                         </div>
 
                         <p class="thongtindesc" style="margin-bottom: 20px;">Phí vận chuyển sẽ được tính ở trang thanh toán</p>

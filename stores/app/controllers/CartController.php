@@ -23,85 +23,102 @@ class CartController {
 
     // Thêm sản phẩm vào giỏ hàng
     public function add() {
-                // Lấy quantity từ form, mặc định là 1 nếu không có hoặc không hợp lệ
-            $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
-            if($quantity < 1) $quantity = 1; // không cho số lượng âm hoặc 0
+        $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
+        if($quantity < 1) $quantity = 1;
 
-            // Lấy product_id và variant_id từ form
-            $product_id = $_POST['id'] ?? null;
-            $variant_id = $_POST['variant_id'] ?? null;
+        $product_id = $_POST['id'] ?? null;
+        $variant_id = $_POST['variant_id'] ?? null;
 
-            if (!$product_id || !$variant_id) {
-                die("Chưa chọn sản phẩm hoặc biến thể.");
-            }
+        if (!$product_id || !$variant_id) {
+            die("Chưa chọn sản phẩm hoặc biến thể.");
+        }
 
-            // Lấy thông tin sản phẩm và biến thể
-            $product = $this->productModel->find($product_id);
-            $variant = $this->variantModel->find($variant_id);
+        $product = $this->productModel->find($product_id);
+        $variant = $this->variantModel->find($variant_id);
 
-            if (!$product || !$variant) {
-                die("Sản phẩm hoặc biến thể không tồn tại.");
-            }
+        if (!$product || !$variant) {
+            die("Sản phẩm hoặc biến thể không tồn tại.");
+        }
 
-            // Khởi tạo giỏ hàng nếu chưa có
-            if (!isset($_SESSION['cart'])) {
-                $_SESSION['cart'] = [];
-            }
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
 
-            // Tạo key duy nhất cho sản phẩm + biến thể
-            $cart_key = $product_id . '_' . $variant_id;
+        $cart_key = $product_id . '_' . $variant_id;
 
-            if (isset($_SESSION['cart'][$cart_key])) {
-                // Nếu đã tồn tại → cộng thêm quantity vừa gửi
-                $_SESSION['cart'][$cart_key]['quantity'] += $quantity;
-            } else {
-                // Thêm sản phẩm mới
-                $_SESSION['cart'][$cart_key] = [
-                    'product_id' => $product['id'],
-                    'name'       => $product['name'],
-                    'price'      => $product['price'],
-                    'image'      => $product['image'] ?? '',
-                    'quantity'   => $quantity, // <-- lấy đúng từ form
-                    'variant_id' => $variant['id'],
-                    'color'      => $variant['color'],
-                    'options'    => $variant['options']
-                ];
-            }
+        if (isset($_SESSION['cart'][$cart_key])) {
+            $_SESSION['cart'][$cart_key]['quantity'] += $quantity;
+        } else {
+            $_SESSION['cart'][$cart_key] = [
+                'product_id' => $product['id'],
+                'name'       => $product['name'],
+                'price'      => $product['price'],
+                'image'      => $product['image'] ?? '',
+                'quantity'   => $quantity,
+                'variant_id' => $variant['id'],
+                'color'      => $variant['color'],
+                'options'    => $variant['options']
+            ];
+        }
 
-              // ===============================
-                // DEBUG: xem quantity và giỏ hàng
-                // echo "<h3>Debug giỏ hàng</h3>";
-                // echo "Quantity nhận được từ form: $quantity<br>";
-                // echo "<pre>";
-                // print_r($_SESSION['cart']);
-                // echo "</pre>";
-                // exit; // Dừng để kiểm tra trước khi redirect
-                // ===============================
-
-                // Chuyển về trang giỏ hàng
-                header("Location: index.php?action=cart");
-                exit;
-    }
-
-    public function update() {
-    $cart_key = $_POST['cart_key'] ?? null;
-    $quantity = $_POST['quantity'] ?? 1;
-
-    if (!$cart_key || !isset($_SESSION['cart'][$cart_key])) {
-        echo "Invalid cart key";
+        header("Location: index.php?action=cart");
         exit;
     }
 
-    $_SESSION['cart'][$cart_key]['quantity'] = max(1, (int)$quantity);
+    public function update() {
+        $cart_key = $_POST['cart_key'] ?? null;
+        $quantity = $_POST['quantity'] ?? 1;
 
-    // TRẢ VỀ JSON CHO JS
-    echo json_encode([
-        "status" => "success",
-        "cart" => $_SESSION['cart']
-    ]);
-    exit;
-}
+        if (!$cart_key || !isset($_SESSION['cart'][$cart_key])) {
+            echo json_encode(["status" => "error", "message" => "Invalid cart key"]);
+            exit;
+        }
 
+        $_SESSION['cart'][$cart_key]['quantity'] = max(1, (int)$quantity);
+
+        echo json_encode([
+            "status" => "success",
+            "cart" => $_SESSION['cart']
+        ]);
+        exit;
+    }
+
+    // Áp dụng mã giảm giá
+    public function apply_voucher() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $voucher_code = trim($_POST['voucher_code'] ?? '');
+
+            if (empty($voucher_code)) {
+                header("Location: index.php?action=cart&error=empty_code");
+                exit;
+            }
+
+            $valid_vouchers = [
+                'GIAM500' => 500000,
+                'IPHONE100' => 1000000
+            ];
+
+            if (isset($valid_vouchers[$voucher_code])) {
+                $_SESSION['voucher'] = [
+                    'code' => $voucher_code,
+                    'discount' => $valid_vouchers[$voucher_code]
+                ];
+                header("Location: index.php?action=cart&success=voucher_applied");
+            } else {
+                header("Location: index.php?action=cart&error=invalid_code");
+            }
+            exit;
+        }
+    }
+
+    // Xóa mã giảm giá
+    public function remove_voucher() {
+        if (isset($_SESSION['voucher'])) {
+            unset($_SESSION['voucher']);
+        }
+        header("Location: index.php?action=cart&success=voucher_removed");
+        exit;
+    }
 
     // Xóa sản phẩm khỏi giỏ hàng
     public function delete() {
@@ -116,7 +133,8 @@ class CartController {
     // Xóa toàn bộ giỏ hàng
     public function clear() {
         unset($_SESSION['cart']);
+        if (isset($_SESSION['voucher'])) unset($_SESSION['voucher']); // Xóa luôn voucher khi xóa giỏ hàng
         header("Location: index.php?action=cart");
         exit();
     }
-}
+} // Kết thúc Class CartController - Chỉ có duy nhất 1 dấu đóng ngoặc ở cuối file
